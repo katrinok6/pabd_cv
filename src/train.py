@@ -42,7 +42,7 @@ def train_model(data_dir, model_dir, epochs, lr, batch_size, image_size):
         validation_data=val_ds,
     )
 
-    model.save(model_dir)
+    model.save(out_dir)
 
 if __name__ == '__main__':
     train()
