@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 data_dir = 'data/raw/pinterest/photos'
-model_path = 'models/my_model'
+model_path = 'models/model1'
 report_path = 'output/report.txt'
 
 
