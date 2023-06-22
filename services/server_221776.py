@@ -1,7 +1,19 @@
-""" Module docstring """
+import io
+import unittest
+
+import PIL.Image
+import requests
 from flask import Flask, request
 import tensorflow as tf
 
+class MyTestCase(unittest.TestCase):
+    def setUp(self):
+        app.run()
+
+    def test_home(self):
+        response = requests.request('GET', 'http://localhost:1774/')
+        sample = response.content.decode()
+        self.assertEqual(sample, 'Home page')
 
 app = Flask('Image classifier')
 resnet = tf.keras.applications.ResNet101()
@@ -13,11 +25,10 @@ model = tf.keras.models.load_model('models\\my_model')
 
 @app.route('/')
 def home():
-    """ Function docstring """
     return 'Home page'
 
 
-@app.route('/classify', methods=['POST', 'GET'])
+@app.route('/classify/imgnet', methods=['POST', 'GET'])
 def classify():
     data = request.data
     img = tf.io.decode_jpeg(data)
@@ -27,6 +38,11 @@ def classify():
     idxs = tf.argsort(out, direction='DESCENDING')[0][:3].numpy()
     out = ', '.join([categories_ru[int(i)] for i in idxs])
     return out
+
+def predict_imagenet(img):
+    out = resnet(img)
+    idxs =  tf.argsort(out, direction='DESCENDING')[0][:3].numpy()
+    return '. '.join([categories_ru[int(i)] for i in idxs])
 
 @app.route('/classify/binary', methods=['POST'])
 def classify_binary():
@@ -40,19 +56,7 @@ def classify_binary():
     idx = dog_probability > 0.5
     return ('Cat', 'Dog')[idx]
 
-# img = keras.utils.load_img(
-#     "PetImages/Cat/6779.jpg", target_size=image_size
-# )
-# img_array = keras.utils.img_to_array(img)
-# img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-#
-# predictions = model.predict(img_array)
-# score = float(predictions[0])
-# print(f"This image is {100 * (1 - score):.2f}% cat and {100 * score:.2f}% dog.")
-
 
 if __name__ == '__main__':
-    app.run(port=1234)
+    app.run(port=1776)
     input()
-
-# comment
